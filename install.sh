@@ -71,32 +71,10 @@ fi
 
 echo ""
 echo "=== 4. 安装 systemd 服务 + 定时器 ==="
-cat > "$SVC_DIR/aihub-checkin.service" <<EOF
-[Unit]
-Description=aihub-checkin daily sign-in
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=oneshot
-Environment=AIHUB_SITE=$SITE
-Environment=AIHUB_TOKEN_FILE=$CONF_DIR/token
-ExecStart=$INSTALL_DIR/scripts/aihub-checkin.sh
-TimeoutStartSec=300
-EOF
-
-cat > "$SVC_DIR/aihub-checkin.timer" <<'EOF'
-[Unit]
-Description=Run aihub-checkin daily at 09:30
-
-[Timer]
-OnCalendar=*-*-* 09:30:00
-Persistent=true
-RandomizedDelaySec=120
-
-[Install]
-WantedBy=timers.target
-EOF
+# 用仓库里的模板，替换占位符
+sed "s#__SITE__#$SITE#; s#__CONF_DIR__#$CONF_DIR#; s#__INSTALL_DIR__#$INSTALL_DIR#" \
+  "$SCRIPT_DIR/systemd/aihub-checkin.service" > "$SVC_DIR/aihub-checkin.service"
+cp "$SCRIPT_DIR/systemd/aihub-checkin.timer" "$SVC_DIR/aihub-checkin.timer"
 
 systemctl daemon-reload
 systemctl enable --now aihub-checkin.timer
