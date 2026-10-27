@@ -1,0 +1,7 @@
+# 运行态与密钥
+/tmp/
+*.token
+token
+.env
+*.log
+chrome-profile/

@@ -1,0 +1,13 @@
+[Unit]
+Description=aihub-checkin daily sign-in (New API Turnstile bypass via real Chrome)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment=AIHUB_SITE=https://aihub.071129.xyz
+# 令牌文件；部署后把系统访问令牌写到这里，chmod 600
+Environment=AIHUB_TOKEN_FILE=/etc/aihub-checkin/token
+ExecStart=/usr/local/lib/aihub-checkin/scripts/aihub-checkin.sh
+# 超时：Chrome 启动 + Turnstile 求解可能达 2-3 分钟
+TimeoutStartSec=300
